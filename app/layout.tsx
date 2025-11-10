@@ -4,8 +4,8 @@ import "./globals.css";
 import { VercelToolbar } from "@vercel/toolbar/next";
 
 export const metadata: Metadata = {
-  title: "Coding Agent",
-  description: "A Next.js frontend for the coding agent API",
+  title: "Github Repo Agent",
+  description: "A Next.js frontend for the github repo agent API",
 };
 
 export default function RootLayout({

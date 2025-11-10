@@ -212,7 +212,7 @@ export const createPR = async (
 
     const commitMessage = `${title}
 
-Co-authored-by: Coding Agent <noreply@${
+Co-authored-by: Github Repo Agent <noreply@${
       process.env.VERCEL_PROJECT_PRODUCTION_URL || "example.com"
     }>`;
     await sandbox.runCommand("git", ["commit", "-m", commitMessage]);

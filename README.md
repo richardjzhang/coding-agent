@@ -1,4 +1,4 @@
-# Coding Agent
+# Github Agent
 
 This project is a Next.js web and API application that allows you to run an AI-powered coding agent against remote JavaScript/TypeScript GitHub repositories. The agent can read, analyze, modify code, and create pull requests based on user instructions.
 
