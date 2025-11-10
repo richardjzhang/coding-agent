@@ -1,6 +1,6 @@
 import { flag } from "flags/next";
 
-const DEFAULT_MODEL = "openai/gpt-5";
+const DEFAULT_MODEL = "openai/gpt-4.1";
 
 export const modelFlag = flag({
   key: "model",
