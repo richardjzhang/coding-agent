@@ -3,6 +3,7 @@ import { generateText, stepCountIs, tool } from "ai";
 import { z } from "zod/v4";
 import { modelFlag } from "@/lib/flags";
 import {
+  createIssue,
   createPR,
   createSandbox,
   editFile,
@@ -49,7 +50,7 @@ export async function codingAgent({
     model,
     prompt,
     system:
-      "You are a coding agent. You will be working with js/ts projects. Your responses must be concise. If you make changes to the codebase, be sure to run the create_pr tool once you are done.",
+      "You are a coding agent. You will be working with js/ts projects. Your responses must be concise. If you make changes to the codebase, be sure to run the create_pr tool once you are done. You can also create GitHub issues using the create_issue tool to document bugs, feature requests, or tasks.",
     stopWhen: stepCountIs(20),
     tools: {
       read_file: tool({
@@ -171,6 +172,52 @@ export async function codingAgent({
           }
 
           return { success: true, linkToPR: result.pr_url };
+        },
+      }),
+      create_issue: tool({
+        description:
+          "Create a GitHub issue in the repository. Use this to report bugs, request features, or document tasks that need to be done.",
+        inputSchema: z.object({
+          title: z.string().describe("The title of the issue"),
+          body: z.string().describe("The body/description of the issue"),
+          labels: z
+            .array(z.string())
+            .optional()
+            .describe(
+              "Optional array of label names to add to the issue (e.g., ['bug', 'enhancement'])"
+            ),
+        }),
+        execute: async ({ title, body, labels }) => {
+          // Verify GitHub token is provided
+          if (!githubArgs.githubToken) {
+            return {
+              error:
+                "GitHub token is required to create an issue. Please provide a valid GitHub token.",
+            };
+          }
+
+          if (!sandbox) {
+            onProgress?.("Setting up development environment...", "thinking");
+            sandbox = await createSandbox(githubArgs);
+          }
+
+          onProgress?.("Creating GitHub issue...", "thinking");
+
+          const result = await createIssue(sandbox, githubArgs, {
+            title,
+            body,
+            labels,
+          });
+
+          if (result.error) {
+            return { error: result.error };
+          }
+
+          return {
+            success: true,
+            linkToIssue: result.issue_url,
+            issueNumber: result.issue_number,
+          };
         },
       }),
     },

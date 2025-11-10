@@ -132,6 +132,72 @@ const validateGitHubToken = async (
   }
 };
 
+export const createIssue = async (
+  sandbox: Sandbox,
+  { repoUrl, githubToken }: GitHubArgs,
+  issueDetails: { title: string; body: string; labels?: string[] }
+) => {
+  try {
+    if (!githubToken)
+      throw new Error("GitHub token is required to create an issue");
+
+    // Validate GitHub token
+    const tokenValidation = await validateGitHubToken(sandbox, githubToken);
+    if (!tokenValidation.valid) {
+      throw new Error(tokenValidation.error || "Invalid GitHub token");
+    }
+
+    const { title, body, labels } = issueDetails;
+    console.log(`Creating issue with title: ${title}`);
+
+    // Extract owner and repo from URL
+    const urlMatch = repoUrl!.match(/github\.com[/:]([^/]+)\/([^/.]+)/);
+    if (!urlMatch) throw new Error("Invalid GitHub repository URL");
+
+    const [, owner, repo] = urlMatch;
+    const issueData: {
+      title: string;
+      body: string;
+      labels?: string[];
+    } = { title, body };
+
+    if (labels && labels.length > 0) {
+      issueData.labels = labels;
+    }
+
+    const response = await sandbox.runCommand("curl", [
+      "-s",
+      "-X",
+      "POST",
+      "-H",
+      `Authorization: token ${githubToken}`,
+      "-H",
+      "Accept: application/vnd.github.v3+json",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      JSON.stringify(issueData),
+      `https://api.github.com/repos/${owner}/${repo}/issues`,
+    ]);
+
+    const result = JSON.parse((await response.output()).toString());
+
+    if (result.html_url) {
+      return {
+        success: true,
+        issue_url: result.html_url,
+        issue_number: result.number,
+      };
+    } else {
+      throw new Error(result.message || "Failed to create issue");
+    }
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
+};
+
 export const createPR = async (
   sandbox: Sandbox,
   { repoUrl, githubToken }: GitHubArgs,
