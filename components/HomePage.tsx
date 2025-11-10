@@ -21,11 +21,11 @@ interface HomePageProps {
 export function HomePage({ currentModel }: HomePageProps) {
   const [step, setStep] = useState<"repository" | "prompt">("prompt");
   const [repositoryConfig, setRepositoryConfig] = useState<RepositoryConfig>({
-    repoUrl: "https://github.com/bennor/coding-agent",
+    repoUrl: "https://github.com/richardjzhang/coding-agent",
     githubToken: "",
   });
   const [prompt, setPrompt] = useState(
-    "Explain what the code in this repository does.",
+    "Explain what the code in this repository does."
   );
   const [repositoryError, setRepositoryError] = useState<string | null>(null);
 
@@ -33,7 +33,7 @@ export function HomePage({ currentModel }: HomePageProps) {
 
   const handleRepositoryConfigChange = (
     field: keyof RepositoryConfig,
-    value: string,
+    value: string
   ) => {
     setRepositoryConfig((prev) => ({ ...prev, [field]: value }));
   };
