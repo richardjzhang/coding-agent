@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export interface AgentRequest {
   prompt: string;
@@ -30,10 +30,10 @@ export function useAgent() {
     });
 
     try {
-      const response = await fetch('/api/agent', {
-        method: 'POST',
+      const response = await fetch("/api/agent", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           prompt: request.prompt,
@@ -50,7 +50,7 @@ export function useAgent() {
       const decoder = new TextDecoder();
 
       if (!reader) {
-        throw new Error('No response body');
+        throw new Error("No response body");
       }
 
       while (true) {
@@ -58,44 +58,45 @@ export function useAgent() {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n').filter(line => line.trim());
+        const lines = chunk.split("\n").filter((line) => line.trim());
 
         for (const line of lines) {
           try {
             const data = JSON.parse(line);
 
-            if (data.type === 'thinking') {
-              setState(prev => ({
+            if (data.type === "thinking") {
+              setState((prev) => ({
                 ...prev,
                 thinkingLogs: [...prev.thinkingLogs, data.message],
               }));
-            } else if (data.type === 'result') {
-              setState(prev => ({
+            } else if (data.type === "result") {
+              setState((prev) => ({
                 ...prev,
                 thinkingLogs: [...prev.thinkingLogs, data.message],
               }));
-            } else if (data.type === 'complete') {
-              setState(prev => ({
+            } else if (data.type === "complete") {
+              setState((prev) => ({
                 ...prev,
                 result: data.result.response,
                 isLoading: false,
               }));
-            } else if (data.type === 'error') {
-              setState(prev => ({
+            } else if (data.type === "error") {
+              setState((prev) => ({
                 ...prev,
                 error: data.message,
                 isLoading: false,
               }));
             }
           } catch (_parseErr) {
-            console.warn('Failed to parse streaming data:', line);
+            console.warn("Failed to parse streaming data:", line);
           }
         }
       }
     } catch (err) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
-        error: err instanceof Error ? err.message : 'An unexpected error occurred',
+        error:
+          err instanceof Error ? err.message : "An unexpected error occurred",
         isLoading: false,
       }));
     }

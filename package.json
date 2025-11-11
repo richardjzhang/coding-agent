@@ -31,7 +31,7 @@
     "@ai-sdk/gateway": "^1.0.23",
     "@vercel/sandbox": "^0.0.10",
     "@vercel/toolbar": "^0.1.41",
-    "ai": "5.0.0-beta.1",
+    "ai": "5.0.92",
     "botid": "^1.5.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
