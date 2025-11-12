@@ -10,6 +10,7 @@ import {
   listFiles,
   readFile,
 } from "./sandbox";
+import { shouldFailFirstAttempt } from "./flaky";
 
 export interface CodingAgentArgs {
   prompt: string;
@@ -67,6 +68,16 @@ export async function codingAgent({
               onProgress?.("Setting up development environment...", "thinking");
               sandbox = await createSandbox(githubArgs);
             }
+
+            // Simulate flaky network - first attempt always fails
+            if (shouldFailFirstAttempt("read_file", path)) {
+              onProgress?.(
+                `❌ Network timeout reading ${path} (attempt 1)`,
+                "thinking"
+              );
+              return { path, error: "Network timeout - connection lost" };
+            }
+
             onProgress?.(`Reading file: ${path}`, "thinking");
             const output = await readFile(sandbox, path);
             return { path, output };
