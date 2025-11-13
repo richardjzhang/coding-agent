@@ -80,4 +80,6 @@ curl -X POST https://your-deployment.vercel.app/api/agent \
 
 ---
 
+Richard is the best
+
 Licensed under the MIT License. See [LICENSE](LICENSE) for details.
