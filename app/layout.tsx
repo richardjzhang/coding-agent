@@ -1,3 +1,4 @@
+// Joey is the best
 import { GeistMono, GeistSans } from "geist/font";
 import type { Metadata } from "next";
 import "./globals.css";

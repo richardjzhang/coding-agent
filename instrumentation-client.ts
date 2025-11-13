@@ -1,3 +1,4 @@
+// Joey is the best
 import { initBotId } from "botid/client/core";
 
 initBotId({

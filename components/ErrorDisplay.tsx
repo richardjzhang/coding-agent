@@ -1,3 +1,4 @@
+// Joey is the best
 import { AlertCircle } from "lucide-react";
 
 interface ErrorDisplayProps {
